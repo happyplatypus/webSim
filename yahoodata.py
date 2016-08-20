@@ -1,8 +1,5 @@
 #!/usr/bin/python
 
-# coding: utf-8
-
-# In[ ]:
 
 import numpy as np
 from pandas.io.data import DataReader
@@ -19,12 +16,6 @@ home = expanduser("~")
 
 
 sec=pd.read_csv(home+"/code/r_projects/investableUniverse/investableUniverse.csv")
-#secs=map(lambda x: x.upper(),sec.tic.tolist())[1:500]
-
-
-#print sec.head()
-
-#print sec.shape
 
 
 sec1=sec[(sec.IPOyear<=2010)]
@@ -77,6 +68,8 @@ if 0:
         tmp['Date']=tmp.index
         d.append(tmp)
     data=pd.concat(tmp) 
+    data.to_pickle(home+'/code/python_projects/webSim/data.pickle')
+
 #data=d[0]
 #data=data.join(d[1:],how='outer')
 
@@ -91,7 +84,6 @@ if 0:
 
 data.head()
 
-data.to_pickle(home+'/code/python_projects/webSim/data.pickle')
 
 
 
@@ -137,8 +129,11 @@ portfolio=symbols_list
 
 
 
+print "calc weights"
+#wts=map(partial(emaDiff,series_='Close' ,first=5, second=15),portfolio) ## un delayed
+wts=map(partial(Diff,series_='Close' ,first=1, second=0),portfolio) ## un delayed
 
-wts=map(partial(emaDiff,series_='Close' ,first=5, second=15),portfolio) ## un delayed
+
 wts=pd.concat(wts,axis=1)
 wts.columns=range(0,wts.shape[1])
 tmp=wts.apply(np.absolute)
@@ -176,6 +171,7 @@ print wts.shape
 
 
 #map(lambda x,y:x*y,[1 ,2 ,3],[4, 5 ,6])
+print "calc rets"
 rets=map(partial(Ret,series_='Adj Close' ,first=0, second=1),portfolio)
 rets=pd.concat(rets,axis=1)
 
@@ -218,7 +214,7 @@ def calcReturn(ii):
 
 
 
-
+print "doing backtest"
 N=wts.shape[0]
 performance=map(calcReturn,range(N-1))
 print np.cumsum(performance)
