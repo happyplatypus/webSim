@@ -48,16 +48,6 @@ data=pd.read_pickle(home+'/code/python_projects/webSim/data.pickle')
 #r = requests.get('https://api.github.com/user', auth=('user', 'pass'))
 #r.status_code
 from dateutil.parser import *
-
-
-# In[ ]:
-
-
-#symbols_list = list(set(options['tic'].tolist()))[0:10]
-#symbols_list = list(set(options['tic'].tolist()))
-
-#symbols_list = ['SPY','HSY']
-
 if 0:
     d = []
     for ticker in symbols_list:
@@ -70,41 +60,8 @@ if 0:
     data=pd.concat(tmp) 
     data.to_pickle(home+'/code/python_projects/webSim/data.pickle')
 
-#data=d[0]
-#data=data.join(d[1:],how='outer')
-
-
-
-
-
-
-# In[ ]:
-
-#data2=pd.merge(options,data,how='inner',on=['tic','Date'])
 
 data.head()
-
-
-
-
-#del data2['Date']
-
-#print data2.tail(30)
-
-#print len(list(set(data.tic)))
-#print len(list(set(options.tic)))
-
-
-
-# In[ ]:
-
-#data.head()
-#data.tail()
-
-#"indicator 1.00 emaDiff Close 10 20"
-#"indicator -1.00 emaDiff Volume 10 20"
-
-
 
 def emaDiff(tic,series_,first,second):
     data1=data[data.tic==tic]
@@ -122,13 +79,11 @@ def Ret(tic,series_,first,second):
     return np.log(data1[series_].shift(first))-np.log(data1[series_].shift(second))
 
 
-#emaDiff("HSY",'Close' ,10, 20)
+
+
+
 from sklearn.preprocessing import scale
-#portfolio=symbols_list[0:500]
 portfolio=symbols_list
-
-
-
 print "calc weights"
 #wts=map(partial(emaDiff,series_='Close' ,first=5, second=15),portfolio) ## un delayed
 wts=map(partial(Diff,series_='Close' ,first=1, second=0),portfolio) ## un delayed
@@ -139,14 +94,6 @@ wts.columns=range(0,wts.shape[1])
 tmp=wts.apply(np.absolute)
 tmp=tmp.apply(np.sum,axis=1)
 wts1=wts.div(tmp,axis=0)
-
-
-#wts=map(partial(Diff,series_='Close' ,first=1, second=2),portfolio) ## un delayed
-#wts=pd.concat(wts,axis=1)
-#wts.columns=range(0,wts.shape[1])
-#tmp=wts.apply(np.absolute)
-#tmp=tmp.apply(np.sum,axis=1)
-#wts=-wts.div(tmp,axis=0)
 
 
 #wtsv=map(partial(emaDiff,series_='Volume' ,first=12, second=26),portfolio) ## un delayed
@@ -161,13 +108,6 @@ wts1=wts.div(tmp,axis=0)
 print wts.shape
 #wts=wts.add(wtsv)
 #wts=wtsv
-
-
-
-#print tmp
-#print np.transpose(scale(np.transpose(wts.as_matrix()),with_std=False))
-#wts_delayed=map(lambda x: x.shift(1),wts)
-
 
 
 #map(lambda x,y:x*y,[1 ,2 ,3],[4, 5 ,6])
@@ -202,16 +142,27 @@ wts.head()
 
 PP=99
 delay_=1
+leverage_=2
+
 def calcReturn(ii):
 	tmp=wts.ix[ii,:].copy()
 	ul=np.nanpercentile(tmp,PP)
 	ll=np.nanpercentile(tmp,100-PP)
 	tmp[(tmp>ll) & (tmp<ul)]=0
 	tmp1=tmp.apply(np.absolute)
-	tmp1=tmp1.apply(np.sum,axis=0)
-	tmp2=tmp.div(tmp1,axis=0)
+	tmp1=np.sum(tmp1) 
+	tmp2=tmp/tmp1*leverage_
 	return np.sum(np.nan_to_num(tmp2.values*rets.ix[ii+delay_,:].values))
 
+ii=N-2
+tmp=wts.ix[ii,:].copy()
+ul=np.nanpercentile(tmp,PP)
+ll=np.nanpercentile(tmp,100-PP)
+tmp[(tmp>ll) & (tmp<ul)]=0
+tmp1=tmp.apply(np.absolute)
+tmp1=np.sum(tmp1) 
+tmp2=tmp/tmp1*leverage_
+np.sum(np.nan_to_num(tmp2.values*rets.ix[ii+delay_,:].values))
 
 
 print "doing backtest"
