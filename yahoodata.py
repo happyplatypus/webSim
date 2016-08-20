@@ -62,7 +62,8 @@ from sklearn.preprocessing import scale
 portfolio=symbols_list
 print "calc weights"
 #wts=map(partial(emaDiff,series_='Close' ,first=5, second=15),portfolio) ## un delayed
-wts=map(partial(Diff,series_='Close' ,first=1, second=0),portfolio) ## un delayed
+#wts=map(partial(Diff,series_='Close' ,first=1, second=0),portfolio) ## un delayed
+wts=map(partial(emaDiff,series_='Volume' ,first=5, second=1),portfolio) ## un delayed
 
 
 wts=pd.concat(wts,axis=1)
@@ -130,15 +131,15 @@ def calcReturn(ii):
 	tmp2=tmp/tmp1*leverage_
 	return np.sum(np.nan_to_num(tmp2.values*rets.ix[ii+delay_,:].values))
 
-ii=N-2
-tmp=wts.ix[ii,:].copy()
-ul=np.nanpercentile(tmp,PP)
-ll=np.nanpercentile(tmp,100-PP)
-tmp[(tmp>ll) & (tmp<ul)]=0
-tmp1=tmp.apply(np.absolute)
-tmp1=np.sum(tmp1) 
-tmp2=tmp/tmp1*leverage_
-np.sum(np.nan_to_num(tmp2.values*rets.ix[ii+delay_,:].values))
+#ii=N-2
+#tmp=wts.ix[ii,:].copy()
+#ul=np.nanpercentile(tmp,PP)
+#ll=np.nanpercentile(tmp,100-PP)
+#tmp[(tmp>ll) & (tmp<ul)]=0
+#tmp1=tmp.apply(np.absolute)
+#tmp1=np.sum(tmp1) 
+#tmp2=tmp/tmp1*leverage_
+#np.sum(np.nan_to_num(tmp2.values*rets.ix[ii+delay_,:].values))
 
 
 print "doing backtest"
