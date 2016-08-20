@@ -1,6 +1,4 @@
 #!/usr/bin/python
-
-
 import numpy as np
 from pandas.io.data import DataReader
 
@@ -25,29 +23,7 @@ sec1.shape
 
 symbols_list=map(lambda x: x.upper(),sec.tic.tolist())
 #symbols_list=map(lambda x: x.upper(),sec.tic.tolist())[1:50]
-
-
-#print symbols_list
-
-#for s in symbols_list:
-#    print '"'+s+'"'
-
-#print options.tic.tolist()
-
-
-# In[ ]:
-
 data=pd.read_pickle(home+'/code/python_projects/webSim/data.pickle')
-
-#data.to_pickle('/home/puru/code/clojure_projects/clojure-download2/yahoodata.pickle')
-
-
-# In[ ]:
-
-#import requests
-#r = requests.get('https://api.github.com/user', auth=('user', 'pass'))
-#r.status_code
-from dateutil.parser import *
 if 0:
     d = []
     for ticker in symbols_list:
@@ -140,7 +116,7 @@ final_returns2['cumulative']=np.cumsum(final_returns)
 
 wts.head()
 
-PP=99
+PP=95
 delay_=1
 leverage_=2
 
@@ -171,20 +147,6 @@ performance=map(calcReturn,range(N-1))
 print np.cumsum(performance)
 
 # In[ ]:
-
-wts.head()
-
-
-# In[ ]:
-
-
-
-def logdiff(x,y):
-    return np.log(x)-np.log(y)
-
-def pdiff(x,y):
-    return x/y-1
-
-
-
+print "sharpe "
+print np.mean(performance)/np.std(performance)*np.sqrt(220)
 
