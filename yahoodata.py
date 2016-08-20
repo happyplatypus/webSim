@@ -33,7 +33,7 @@ sec1=sec[(sec.IPOyear<=2010)]
 sec1.shape
 
 symbols_list=map(lambda x: x.upper(),sec.tic.tolist())
-symbols_list=map(lambda x: x.upper(),sec.tic.tolist())[1:50]
+#symbols_list=map(lambda x: x.upper(),sec.tic.tolist())[1:50]
 
 
 #print symbols_list
@@ -92,7 +92,7 @@ data=pd.concat(d)
 
 data.head()
 
-data.to_pickle(home+'/code/python_projects/webSim/yahoodata.pickle')
+data.to_pickle(home+'/code/python_projects/webSim/data.pickle')
 
 
 
@@ -206,6 +206,7 @@ final_returns2['cumulative']=np.cumsum(final_returns)
 wts.head()
 
 PP=99
+delay_=1
 def calcReturn(ii):
 	tmp=wts.ix[ii,:].copy()
 	ul=np.nanpercentile(tmp,PP)
@@ -214,13 +215,13 @@ def calcReturn(ii):
 	tmp1=tmp.apply(np.absolute)
 	tmp1=tmp1.apply(np.sum,axis=0)
 	tmp2=tmp.div(tmp1,axis=0)
-	return np.sum(np.nan_to_num(tmp2.values*rets.ix[ii,:].values))
+	return np.sum(np.nan_to_num(tmp2.values*rets.ix[ii+delay_,:].values))
 
 
 
 
 N=wts.shape[0]
-performance=map(calcReturn,range(N))
+performance=map(calcReturn,range(N-1))
 print np.cumsum(performance)
 
 # In[ ]:
