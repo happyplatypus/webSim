@@ -206,32 +206,22 @@ final_returns2['cumulative']=np.cumsum(final_returns)
 wts.head()
 
 PP=99
-tmp=wts.ix[6,:].copy()
-ul=np.nanpercentile(tmp,PP)
-ll=np.nanpercentile(tmp,100-PP)
-print ul
-print ll
-tmp[(tmp>ll) & (tmp<ul)]=0
-tmptest=np.nan_to_num(tmp)
-print tmptest[tmptest!=0]
-tmp1=tmp.apply(np.absolute)
-tmp1=tmp1.apply(np.sum,axis=0)
-tmp2=tmp.div(tmp1,axis=0)
-tmptest=np.nan_to_num(tmp2)
-print tmptest[tmptest!=0]
-
-tmp3=tmp2.apply(np.absolute)
-tmp3=tmp3.apply(np.sum,axis=0)
-print tmp3
-print "returns "
-print np.cumsum(np.nan_to_num(tmp2.values*rets.ix[6,:].values))
+def calcReturn(ii):
+	tmp=wts.ix[ii,:].copy()
+	ul=np.nanpercentile(tmp,PP)
+	ll=np.nanpercentile(tmp,100-PP)
+	tmp[(tmp>ll) & (tmp<ul)]=0
+	tmp1=tmp.apply(np.absolute)
+	tmp1=tmp1.apply(np.sum,axis=0)
+	tmp2=tmp.div(tmp1,axis=0)
+	return np.sum(np.nan_to_num(tmp2.values*rets.ix[ii,:].values))
 
 
 
 
-
-
-
+N=wts.shape[0]
+performance=map(calcReturn,range(N))
+print np.cumsum(performance)
 
 # In[ ]:
 
