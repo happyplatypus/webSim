@@ -46,7 +46,7 @@ symbols_list=map(lambda x: x.upper(),sec.tic.tolist())
 
 # In[ ]:
 
-#data=pd.read_pickle('/home/puru/code/clojure_projects/clojure-download2/yahoodata.pickle')
+data=pd.read_pickle(home+'/code/python_projects/webSim/data.pickle')
 
 #data.to_pickle('/home/puru/code/clojure_projects/clojure-download2/yahoodata.pickle')
 
@@ -67,16 +67,16 @@ from dateutil.parser import *
 
 #symbols_list = ['SPY','HSY']
 
-
-d = []
-for ticker in symbols_list:
-    print ticker
-    tmp=DataReader(ticker, "yahoo", '2010-01-01')
+if 0:
+    d = []
+    for ticker in symbols_list:
+        print ticker
+        tmp=DataReader(ticker, "yahoo", '2010-01-01')
     #tmp.columns=map(lambda x : ticker+"."+x,tmp.columns)
-    tmp['tic']=ticker
-    tmp['Date']=tmp.index
-    d.append(tmp)
-    
+        tmp['tic']=ticker
+        tmp['Date']=tmp.index
+        d.append(tmp)
+    data=pd.concat(tmp) 
 #data=d[0]
 #data=data.join(d[1:],how='outer')
 
@@ -87,7 +87,6 @@ for ticker in symbols_list:
 
 # In[ ]:
 
-data=pd.concat(d)
 #data2=pd.merge(options,data,how='inner',on=['tic','Date'])
 
 data.head()
